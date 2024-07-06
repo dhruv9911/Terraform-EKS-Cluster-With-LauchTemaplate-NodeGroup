@@ -1,20 +1,13 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This repo is used for create EKS Cluster with Launch Template for managed NodeGroup for AMI AmazonLinux-2023 using Terraform Code
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Create EKS Cluster with all resources
+terraform plan -var-file="env/sit/apps_infra.tfvars"
+terraform apply -var-file="env/sit/apps_infra.tfvars"
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+# Delete EKS Cluster with all resources
+terraform destroy -var-file="env/sit/apps_infra.tfvars" 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Azure DevOps Pipeline Integration
+Create repo in Azure Pipeline and put all code over there, and configure Azure pipeline for deploy resources from Azure pipeline to AWS Account, before that you need to setup an "Agent pool" in Azure pipeline. Create an EC2 instance in AWS account where you want to create these resources from Azure Pipeline and install "Azure-Agent" on thhat EC2 Instance, also make sure you attached "Admin-Role" on same Ec2 Instance.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
