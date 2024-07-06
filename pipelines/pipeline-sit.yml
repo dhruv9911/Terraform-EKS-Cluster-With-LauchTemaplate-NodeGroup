@@ -1,0 +1,17 @@
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  batch: true
+  branches:
+    include:
+    - sit
+  paths:
+    exclude:
+    - README.md
+# Do not trigger builds on PRs
+pr: none
+extends:
+  template: azure-pipeline-shared.yml
+  parameters:
+      pool_name: sbx-app-dev-pool
+      env: sit
+      repository_name: 'eks-cluster-sbx-app'
