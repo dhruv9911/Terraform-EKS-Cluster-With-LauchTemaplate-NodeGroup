@@ -1,0 +1,68 @@
+parameters:
+- name: repository_name
+  type: string
+  default: ""
+- name: pool_name
+  type: string
+  default: ""
+- name: env
+  type: string
+  default: ""
+resources:
+  repositories:
+    - repository: eks-cluster-sbx-app
+      type: git
+      ref: $(Build.SourceBranchName)
+      name: 'eks-cluster-sbx-app'
+stages:
+- stage: Terraform_plan
+  jobs:
+  - job: Terraform_plan
+    pool: ${{parameters.pool_name}}
+    steps:
+      - script: echo '$(Build.BuildNumber)'
+        displayName: "Fetch Build Number"
+      - checkout: ${{parameters.repository_name}}
+        path: ${{parameters.repository_name}}
+        displayName: "Check out Terraform code"
+      - bash: terraform init -backend-config="./env/${{parameters.env}}/backend.tf"
+      - bash: terraform plan -var-file="./env/${{parameters.env}}/apps_infra.tfvars" -out=tf-plan
+        displayName: "Terraform Plan"
+      - publish: '$(pipeline.workspace)/${{parameters.repository_name}}' # Local path to include in the Artifact
+        artifact: "custom_apps"
+      # - task: checkmarx.checkmarx-ast-azure-plugin.cx-scan-task.Checkmarx AST@2
+      #   displayName: 'Checkmarx AST'
+      #   inputs:
+      #     CheckmarxService: 'CheckMarx_Connection'
+      #     tenantName: 'tfnsw-anz'     
+      #   continueOnError: true               
+- stage: Terraform_apply
+  jobs:
+  - job: CheckoutCode
+    pool: ${{parameters.pool_name}}
+    steps:
+    - checkout: none
+    - download: current
+      artifact: "custom_apps"
+      displayName: "Check out Terraform code"
+    - bash: ls
+  - deployment: 'TerraformTo${{parameters.env}}'
+    dependsOn: CheckoutCode
+    pool: ${{parameters.pool_name}}
+    environment: terraform_apply_${{parameters.env}}_apps
+    strategy:
+        runOnce:
+          deploy:
+            steps:
+               - bash: cd '$(Pipeline.Workspace)/custom_apps/'
+               - bash: terraform init -backend-config="./env/${{parameters.env}}/backend.tf"
+                 displayName: "Terraform Initialization"
+                 workingDirectory: $(Pipeline.Workspace)/custom_apps/
+               - script: |
+                   chmod +x .terraform/providers/registry.terraform.io/hashicorp/aws/*/linux_amd64/terraform-provider*
+                   chmod +x .terraform/providers/registry.terraform.io/hashicorp/random/*/linux_amd64/terraform-provider*
+                   chmod +x .terraform/providers/registry.terraform.io/hashicorp/template/*/linux_amd64/terraform-provider*
+                   chmod +x .terraform/providers/registry.terraform.io/hashicorp/time/*/linux_amd64/terraform-provider-time*
+                   terraform apply -var-file="./env/${{parameters.env}}/apps_infra.tfvars" --auto-approve
+                 displayName: "Terraform Apply"
+                 workingDirectory: $(Pipeline.Workspace)/custom_apps/
