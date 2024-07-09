@@ -1,18 +1,18 @@
-vpc_id                                     = "vpc-0087da993d131a274"
+vpc_id                                     = "vpc-0abb73a834b5ff69e"
 #eks_cluster_app_subnet_ids                         = ["subnet-0a1c22e098ef8a694", "subnet-00a4015b00acf9056", "subnet-0dd766778d83736c9"]
-private_subnet_1_id                        = "subnet-02c61a66ea6f90867"
-private_subnet_2_id                        = "subnet-0407ad323712dac8a"
-private_subnet_3_id                        = "subnet-0905da81bcb4a4786"
-environment                                =  "dev"
-domain                                     =  "apps"
+private_subnet_1_id                        = "subnet-0860aa75ed8a6f9cb"
+private_subnet_2_id                        = "subnet-0b91b92e45981892e"
+private_subnet_3_id                        = "subnet-0df5d9dabdb6cdc88"
+environment                                =  "sit"
+domain                                     =  "sbx-apps"
 
 #==================<< Start of AWS common variables. >>================#
 
 aws_auth_profile = "default"
 resource_region  = "ap-southeast-2"
 region           = "ap-southeast-2"
-project          = "ado-sbx"
-env              = "dev"
+project          = "ado-sbx-apps"
+env              = "sit"
 global_suffix    = ""
 resource_azs     = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 
@@ -23,8 +23,8 @@ resource_azs_name = {
 }
 
 default_tags = {
-  "Environment"   = "dev"
-  "Project"       = "ado-sbx"
+  "Environment"   = "sit"
+  "Project"       = "ado-sbx-apps"
   "Department"    = "GSIT"
   "CreatedUsing"  = "Terraform"
 }
@@ -38,7 +38,7 @@ eks_security_grp_ingress_rule_no = ["1"]
 
 eks_security_grp_ingress_destination_cidr_block = {
   # VPC  CIDR is "10.219.26.0/23"
-  "1" = "10.219.26.0/23"
+  "1" = "172.31.0.0/16"
 #  "2" = "0.0.0.0/0"
 }
 
@@ -136,3 +136,57 @@ node_group_max_size                             = { "ng1" = 5 }
 node_group_labels                               = { "ng1" = {} }
 
 #==================<< End of EKS cluster and EKS Node Group variables. >>================#
+
+
+#####################################################################################################
+#==================<< Start of EKS NodeGroup Security grp ingress rule variables. >>================#
+
+eks_node_security_grp_ingress_rule_no = ["1"]
+
+eks_node_security_grp_ingress_destination_cidr_block = {
+  # VPC  CIDR is "10.10.0.0/21"
+  "1" = "172.31.0.0/16"
+}
+
+eks_node_security_grp_ingress_rule_protocol = {
+  "1" = "all"
+}
+
+eks_node_security_grp_ingress_rule_from_port = {
+  "1" = "0"
+}
+
+eks_node_security_grp_ingress_rule_to_port = {
+  "1" = "0"
+}
+
+eks_node_security_grp_ingress_rule_self_flag = {
+  "1" = "false"
+}
+
+#==================<< End of EKS NodeGrouop Security grp ingress rule variables. >>================#
+#==================<< Start of EKS NodeGroup Security grp engress rule variables. >>================#
+
+eks_node_security_grp_egress_rule_no = ["1"]
+
+eks_node_security_grp_egress_destination_cidr_block = {
+  "1" = "0.0.0.0/0"
+}
+
+eks_node_security_grp_egress_rule_protocol = {
+  "1" = "all"
+}
+
+eks_node_security_grp_egress_rule_from_port = {
+  "1" = "0"
+}
+
+eks_node_security_grp_egress_rule_to_port = {
+  "1" = "0"
+}
+
+eks_node_security_grp_egress_rule_self_flag = {
+  "1" = "false"
+}
+
+#==================<< End of EKS NodeGroup Security grp engress rule variables. >>================#
