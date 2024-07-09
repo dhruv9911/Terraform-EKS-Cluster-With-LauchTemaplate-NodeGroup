@@ -341,6 +341,3 @@ variable "eks_node_security_grp_egress_rule_self_flag" {
 }
 
 #==================<< End of EKS NodeGroup Security grp engress rule variables. >>================#
-
-
-
