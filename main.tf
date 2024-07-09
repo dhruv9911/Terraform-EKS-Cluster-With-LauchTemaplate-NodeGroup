@@ -332,4 +332,3 @@ resource "aws_eks_node_group" "eks_node_group" {
     Name = format("%s-EksNodeGroup%s", local.resource_name_prefix, var.global_suffix)
   })
 }
-
